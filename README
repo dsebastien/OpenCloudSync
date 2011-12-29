@@ -1,0 +1,10 @@
+This branch contains the web pages that are available via: dsebastien.github.com/opencloudsync
+
+To update the content:
+- make changes
+- commit locally
+- git push origin gh-pages
+- wait ~10m
+
+
+Reference doc: http://pages.github.com/

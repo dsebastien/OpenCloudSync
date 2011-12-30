@@ -1,15 +1,17 @@
 # About
 The OpenCloudSync project aims to provide a data synchronization solution supporting various data stores (e.g., Dropbox, Box.net, NAS, Network shares, FTP, etc).
 
-Check our the following pages for more information:
-
-* wiki: https://github.com/dsebastien/OpenCloudSync/wiki
-* requirements: https://github.com/dsebastien/OpenCloudSync/wiki/Requirements
-
-Interesting in participating? Check out the development page on the wiki: https://github.com/dsebastien/OpenCloudSync/wiki/Development
+Interested in participating? Check out the development page on the wiki: https://github.com/dsebastien/OpenCloudSync/wiki/Development
 
 # Status
 This project is in a very early stage, we're just thinking about the requirements and high level architecture. Don't hesitate to join us and share your ideas!
+
+# Documentation
+Check our the following pages for more information about the project:
+
+* wiki: https://github.com/dsebastien/OpenCloudSync/wiki
+* requirements: https://github.com/dsebastien/OpenCloudSync/wiki/Requirements
+* development: https://github.com/dsebastien/OpenCloudSync/wiki/Development
 
 # Authors
 Sebastien Dubois

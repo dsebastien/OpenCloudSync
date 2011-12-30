@@ -12,7 +12,8 @@ Interesting in participating? Check out the development page on the wiki: https:
 This project is in a very early stage, we're just thinking about the requirements and high level architecture. Don't hesitate to join us and share your ideas!
 
 # Authors
-Sébastien Dubois
+Sebastien Dubois
+
 * http://twitter.com/dSebastien
 * http://github.com/dSebastien
 * http://www.dsebastien.net

@@ -2,6 +2,7 @@
 The OpenCloudSync project aims to provide a data synchronization solution supporting various data stores (e.g., Dropbox, Box.net, NAS, Network shares, FTP, etc).
 
 Check our the following pages for more information:
+
 * wiki: https://github.com/dsebastien/OpenCloudSync/wiki
 * requirements: https://github.com/dsebastien/OpenCloudSync/wiki/Requirements
 

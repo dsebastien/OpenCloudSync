@@ -1,2 +1,11 @@
+# About
+The OpenCloudSync project aims to provide a data synchronization solution supporting various data stores (e.g., Dropbox, Box.net, NAS, Network shares, FTP, etc).
+
+Check our the following pages for more information:
 * wiki: https://github.com/dsebastien/OpenCloudSync/wiki
 * requirements: https://github.com/dsebastien/OpenCloudSync/wiki/Requirements
+
+Interesting in participating? Check out the development page on the wiki: https://github.com/dsebastien/OpenCloudSync/wiki/Development
+
+# License
+This project and all associated source code is licensed under the terms of the [GNU General Public License v3 or any later version](http://www.gnu.org/licenses/gpl-3.0.html).

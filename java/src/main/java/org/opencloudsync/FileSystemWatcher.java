@@ -9,8 +9,10 @@ import java.io.File;
 /**
  *
  */
+// todo remove? or use to abstract the file system monitoring completely from the index manager?
 public class FileSystemWatcher {
     //todo handle multiple folders?
+    //todo store folders to watch in a flat file?
     private final File folderToWatch;
     private final IndexManager indexManager;
 
@@ -32,7 +34,6 @@ public class FileSystemWatcher {
     // load root folder info (via File)
     // check index for that folder name in the known TreeReference list
     // need the latest version
-
 
     /**
      * Refresh the in-memory tree

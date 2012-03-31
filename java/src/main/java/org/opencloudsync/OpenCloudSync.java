@@ -1,48 +1,70 @@
 package org.opencloudsync;
 
-import com.mongodb.DB;
-import com.mongodb.Mongo;
+import org.apache.commons.io.monitor.FileAlterationListener;
+import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
+import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
-import java.net.UnknownHostException;
 import java.security.Security;
 
 /**
- * Date: 24/01/12
- * Time: 08:58
+ * OpenCloudSync's entry point.
  */
-public class OpenCloudSync {
-    public static void main(String... args){
-        //todo pom.xml: downloadsources etc!
+public final class OpenCloudSync {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenCloudSync.class);
 
+    private final Configuration configuration;
+    private IndexManager indexManager;
+    
+    public OpenCloudSync(final Configuration configuration){
+        this.configuration = configuration;
+    }
 
-        // configure BouncyCastle as security provider
-        Security.addProvider(new BouncyCastleProvider());
+    @Required
+    public void setIndexManager(final IndexManager indexManager){
+        this.indexManager = indexManager;
+    }
 
-        // todo extract
-        // connect to mongodb
-        Mongo m = null;
+    public void start(){
+        File folderToWatch = new File(configuration.getFolderToWatch());
+
+        FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(folderToWatch, indexManager);
+        fileSystemWatcher.refresh();
+
+        //http://commons.apache.org/io/apidocs/org/apache/commons/io/monitor/FileAlterationObserver.html
+        FileAlterationObserver fileAlterationObserver = new FileAlterationObserver(folderToWatch);
+        fileAlterationObserver.addListener(indexManager); // the index manager will be notified of changes
+        FileAlterationMonitor fileAlterationMonitor = new FileAlterationMonitor(100, fileAlterationObserver);
+
+        fileAlterationMonitor.run();
         try {
-            m = new Mongo("localhost", 27017);
-        } catch (UnknownHostException e) {
+            fileAlterationMonitor.start();
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        // TODO remove later on
-        // ensure the db is dropped
-        m.dropDatabase("tests");
-        // TODO rename later on
-        DB db = m.getDB( "tests");
+    }
 
-        // load/initialize repositories
-        RepositoryManager repositoryManager = new RepositoryManager("./sample-data/.repository");
-        IndexManager indexManager = new IndexManager(repositoryManager);
+    /**
+     * Entry point
+     * @param args
+     */
+    public static void main(final String... args){
+        LOGGER.trace("Initializing Spring");
+        AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ctx.registerShutdownHook();
 
-        File folderToWatch = new File("./sample-data");
+        LOGGER.trace("Configuring Bouncy Castle as security provider");
+        Security.addProvider(new BouncyCastleProvider());
 
-        FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(folderToWatch, indexManager);
-
-        fileSystemWatcher.refresh();
+        OpenCloudSync openCloudSync = ctx.getBean(OpenCloudSync.class);
+        openCloudSync.start();
     }
 }

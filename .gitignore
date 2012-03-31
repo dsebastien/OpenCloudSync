@@ -1,0 +1,12 @@
+.DS_Store
+.settings
+.idea
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+target
+bin
+build
+java.exe.stackdump

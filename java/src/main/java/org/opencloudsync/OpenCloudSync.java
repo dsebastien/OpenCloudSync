@@ -12,6 +12,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.security.Security;
 
 /**
@@ -49,7 +50,6 @@ public final class OpenCloudSync {
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-
     }
 
     /**

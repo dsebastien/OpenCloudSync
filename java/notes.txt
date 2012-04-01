@@ -82,3 +82,11 @@ implement addon for bayfiles: http://bayfiles.com/api
 
 directory walker: http://commons.apache.org/io/api-release/org/apache/commons/io/DirectoryWalker.html
 folder watch: http://commons.apache.org/io/api-release/index.html?org/apache/commons/io/monitor/package-summary.html
+
+
+http://stackoverflow.com/questions/2185734/recursive-n-way-merge-diff-algorithm-for-directory-trees
+
+packaging for Windows:
+- http://winrun4j.sourceforge.net/
+- http://jsmooth.sourceforge.net/
+

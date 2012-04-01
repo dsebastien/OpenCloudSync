@@ -13,6 +13,7 @@ import java.io.File;
 /**
  *
  */
+//todo rename to IndexService
 public class IndexManager implements FileAlterationListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexManager.class);
 

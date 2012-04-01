@@ -1,7 +1,7 @@
 package org.opencloudsync;
 
 /**
- *
+ * OpenCloudSync configuration.
  */
 public class Configuration {
     private final String folderToWatch;

@@ -154,6 +154,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>${version.commons-lang}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${version.commons-codec}</version>
+        </dependency>
 
         <!-- Logging -->
         <dependency>
@@ -351,9 +356,12 @@
 
         <!-- Apache Commons -->
         <version.commons-lang>3.1</version.commons-lang>
+        <version.commons-io>2.2</version.commons-io>
+        <version.commons-codec>1.6</version.commons-codec>
+        <!--
         <version.commons-beanutils>1.7.0</version.commons-beanutils>
         <version.commons-collections>3.2</version.commons-collections>
-        <version.commons-io>2.2</version.commons-io>
+        -->
 
         <!-- Logging -->
         <version.log4j>1.2.16</version.log4j>

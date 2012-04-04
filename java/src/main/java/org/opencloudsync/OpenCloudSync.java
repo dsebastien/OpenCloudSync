@@ -12,7 +12,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.security.Security;
 
 /**
@@ -23,9 +22,11 @@ public final class OpenCloudSync {
 
     private final Configuration configuration;
     private IndexManager indexManager;
+    private FileSystemWatcher fileSystemWatcher;
     
     public OpenCloudSync(final Configuration configuration){
         this.configuration = configuration;
+        LOGGER.info("OpenCloudSync v"+configuration.getVersion()+". Loading...");
     }
 
     @Required
@@ -33,22 +34,18 @@ public final class OpenCloudSync {
         this.indexManager = indexManager;
     }
 
+    @Required
+    public void setFileSystemWatcher(final FileSystemWatcher fileSystemWatcher){
+        this.fileSystemWatcher = fileSystemWatcher;
+    }
+
     public void start(){
         File folderToWatch = new File(configuration.getFolderToWatch());
 
-        FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(folderToWatch, indexManager);
-        fileSystemWatcher.refresh();
-
-        //http://commons.apache.org/io/apidocs/org/apache/commons/io/monitor/FileAlterationObserver.html
-        FileAlterationObserver fileAlterationObserver = new FileAlterationObserver(folderToWatch);
-        fileAlterationObserver.addListener(indexManager); // the index manager will be notified of changes
-        FileAlterationMonitor fileAlterationMonitor = new FileAlterationMonitor(100, fileAlterationObserver);
-
-        fileAlterationMonitor.run();
         try {
-            fileAlterationMonitor.start();
+            fileSystemWatcher.start();
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            LOGGER.warn("Failed to start the file system watcher", e);
         }
     }
 

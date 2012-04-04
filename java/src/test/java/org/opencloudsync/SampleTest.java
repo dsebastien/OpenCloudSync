@@ -7,8 +7,10 @@ import java.util.List;
 
 public class SampleTest {
     public static void main(String... args){
+        /*
         File inputFile = new File("./sample-data/sample.txt");
         File outputFile = new File("./sample-data/sample-output.txt");
+
 
         FileReader fileReader = new FileReaderImpl();
 
@@ -17,13 +19,7 @@ public class SampleTest {
             System.out.println("chunks: "+fileChunks.size());
             System.out.println("first chunk bytes: " + fileChunks.get(0).getBytes().length);
 
-            //todo
-            //BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(yourFile));
-            //bos.write(fileBytes);
-            //bos.flush();
-            //bos.close();
-
-            OutputStream outputStream = new FileOutputStream(outputFile);
+            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
             
             for(FileChunk chunk: fileChunks){
                 try {
@@ -38,5 +34,6 @@ public class SampleTest {
         } catch (FileNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+        */
     }
 }

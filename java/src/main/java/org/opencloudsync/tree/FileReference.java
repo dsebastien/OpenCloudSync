@@ -1,7 +1,6 @@
 package org.opencloudsync.tree;
 
-import org.opencloudsync.FileChunkReference;
-import org.opencloudsync.tree.Node;
+import org.opencloudsync.DigestHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +9,7 @@ import java.util.List;
  * Date: 20/01/12
  * Time: 17:23
  */
-public class FileReference implements Node {
-    //todo final? how to update indexed information? create brand new objects all the time or update these?
+public class FileReference implements Node, DigestHolder {
     private final String name;
     //todo add other metadata (?)
     private final List<FileChunkReference> chunks = new ArrayList<FileChunkReference>();
@@ -20,6 +18,8 @@ public class FileReference implements Node {
         //todo check args
         this.name = name;
         this.chunks.addAll(chunks); // we just add the given chunks
+
+        //todo calculate digest
     }
 
     public String getName() {
@@ -30,8 +30,17 @@ public class FileReference implements Node {
         return chunks;
     }
 
-    @Override
     public boolean isLeaf() {
         return true;
+    }
+
+    public byte[] getDigest() {
+        // todo implement
+        return new byte[0];
+    }
+
+    public String getDigestAsHexString() {
+        // todo implement
+        return null;
     }
 }

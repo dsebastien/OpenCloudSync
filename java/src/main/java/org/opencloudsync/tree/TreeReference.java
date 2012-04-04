@@ -7,6 +7,8 @@ package org.opencloudsync.tree;
 public class TreeReference {
     private final Node rootNode;
 
+    // todo add a tree hash? calculated based on?
+
     public TreeReference(final Node rootNode) {
         this.rootNode = rootNode;
     }

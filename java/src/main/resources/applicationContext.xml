@@ -24,28 +24,45 @@
     </jdbc:embedded-database>
     -->
 
-    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="${jdbc.driverClassName}" />
-        <property name="url" value="${jdbc.url}" />
-        <property name="username" value="${jdbc.username}" />
-        <property name="password" value="${jdbc.password}" />
-    </bean>
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" 
+          p:driverClassName="${jdbc.driverClassName}"
+          p:url="${jdbc.url}"
+          p:username="${jdbc.username}"
+          p:password="${jdbc.password}"
+    />
 
     <jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
         <jdbc:script location="classpath:db-schema.sql" />
         <jdbc:script location="classpath:db-test-data.sql" />
     </jdbc:initialize-database>
 
-    <bean id="configuration" class="org.opencloudsync.Configuration">
-        <constructor-arg name="folderToWatch" value="${config.folderToWatch}" />
-    </bean>
+    <bean id="configuration" class="org.opencloudsync.Configuration"
+          c:folderToWatch="${config.folderToWatch}"
+          c:version="${config.version}"
+    />
 
-    <bean id="openCloudSync" class="org.opencloudsync.OpenCloudSync">
-        <constructor-arg name="configuration" ref="configuration" />
-        <property name="indexManager" ref="indexManager" />
-    </bean>
+    <bean id="indexManager" class="org.opencloudsync.IndexManager"
+          p:dataSource-ref="dataSource"
+    />
+    
+    <bean id="repositoryManager" class="org.opencloudsync.RepositoryManager" c:repositoryFolder="${config.repositoryFolder}"
 
-    <bean id="indexManager" class="org.opencloudsync.IndexManager">
-        <property name="dataSource" ref="dataSource" />
-    </bean>
+    />
+
+    <bean id="openCloudSync" class="org.opencloudsync.OpenCloudSync"
+        c:configuration-ref="configuration"
+        p:indexManager-ref="indexManager"
+        p:fileSystemWatcher-ref="fileSystemWatcher"
+    />
+    
+    <bean id="fileReader" class="org.opencloudsync.FileReaderImpl" 
+          p:maxFileChunkSize="${config.maxFileChunkSize}"
+          p:repositoryManager-ref="repositoryManager"
+    />
+    
+    <bean id="fileSystemWatcher" class="org.opencloudsync.FileSystemWatcher"
+        p:folderToWatch="${config.folderToWatch}"
+        p:indexManager-ref="indexManager"
+        p:fileReader-ref="fileReader"
+    />
 </beans>

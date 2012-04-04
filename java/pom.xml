@@ -6,7 +6,7 @@
 
     <groupId>org.opencloudsync</groupId>
     <artifactId>OpenCloudSync</artifactId>
-    <version>1.0</version>
+    <version>0.1</version>
 
     <name>OpenCloudSync</name>
     <description>Your data in the cloud, your way.</description>

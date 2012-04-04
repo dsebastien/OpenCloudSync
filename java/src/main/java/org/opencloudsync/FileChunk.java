@@ -1,21 +1,29 @@
 package org.opencloudsync;
 
-import java.util.List;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
-public class FileChunk {
+public class FileChunk implements DigestHolder {
     private final byte[] bytes;
+    private final byte[] digest;
+    private final String digestAsHexString;
 
     public FileChunk(final byte[] bytes) {
         this.bytes = bytes;
-        //tàdà,calculate checksum
+
+        digest = DigestUtils.sha(bytes);
+        digestAsHexString = Hex.encodeHexString(digest);
     }
 
     public byte[] getBytes() {
         return bytes;
     }
+
+    public byte[] getDigest(){
+        return digest;
+    }
     
-    public String getChecksum(){
-        //todo implement
-        return null;
+    public String getDigestAsHexString(){
+        return digestAsHexString;
     }
 }

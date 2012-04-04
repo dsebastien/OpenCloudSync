@@ -10,3 +10,4 @@ target
 bin
 build
 java.exe.stackdump
+*.h2.db

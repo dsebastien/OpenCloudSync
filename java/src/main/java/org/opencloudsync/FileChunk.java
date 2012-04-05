@@ -1,7 +1,7 @@
 package org.opencloudsync;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
+import org.opencloudsync.utils.DigestUtils;
 
 public class FileChunk implements DigestHolder {
     private final byte[] bytes;

@@ -39,11 +39,10 @@ public class FileReaderImpl implements FileReader {
             throw new IllegalArgumentException("The file must be provided, exist, be a file not a directory and be readable");
         }
 
-        FileReference retVal = null;
         //todo ensure that we use a collection where the order of retrieval is guaranteed!
         List<FileChunkReference> fileChunkReferences = new ArrayList<FileChunkReference>();
 
-        FileChunk fileChunk = null;
+        FileChunk fileChunk;
         byte[] fileChunkBytes;
         
         byte[] buffer = new byte[maxFileChunkSize];
@@ -66,6 +65,7 @@ public class FileReaderImpl implements FileReader {
 
                     //todo might not be the best way to do this
                     // might be better to split this method in two to avoid mixing responsibilities
+                    // might also be better to use an interface indead of an actual implementation
                     repositoryManager.saveChunk(fileChunk);
 
                     fileChunkReferences.add(new FileChunkReference(fileChunk));
@@ -80,7 +80,6 @@ public class FileReaderImpl implements FileReader {
         } finally{
             IOUtils.closeQuietly(fileInputSteam);
         }
-
         return new FileReference(file.getName(), fileChunkReferences);
     }
 }

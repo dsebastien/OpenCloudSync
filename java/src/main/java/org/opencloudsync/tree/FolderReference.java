@@ -1,8 +1,12 @@
 package org.opencloudsync.tree;
 
+import org.apache.commons.codec.binary.Hex;
+import org.opencloudsync.DigestHolder;
 import org.opencloudsync.tree.Node;
+import org.opencloudsync.utils.DigestUtils;
 
 import java.io.File;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,20 +14,31 @@ import java.util.List;
  * Date: 23/01/12
  * Time: 08:21
  */
-public class FolderReference implements Node{
+public class FolderReference implements Node, DigestHolder{
     private String name;
+    private byte[] digest;
+    private String digestAsHexString;
 
     //TODO !! concurrency/synchronization issues
 
     private final List<Node> nodes = new ArrayList<Node>();
 
-    public FolderReference(final File file, final List<Node> nodes){
+    public FolderReference(final String name, final List<Node> nodes){
         // todo check arguments (not null, not empty name, etc)
-        this.name = file.getName();
+        this.name = name;
         this.nodes.addAll(nodes);
 
-        //todo internally calculate the hash of the folderreference by combining all underlying hashes
-        //+ implement accessor for the resulting value
+        // The digest of a folder is the combination of all the hashes of the nodes below it & the hash of the folder name
+        // todo maybe better not to include the folder name in the digest calculation?
+        // it'd mean that the hash of a folder is only dependent on its contents thus even if the name of the folder changes
+        // it'll still be possible to recognize that it's actually the same content
+        final MessageDigest messageDigest = DigestUtils.getShaDigest();
+        for(Node node: nodes){
+            DigestUtils.updateDigest(messageDigest, node.getDigest());
+        }
+        DigestUtils.updateDigest(messageDigest, name);
+        digest = messageDigest.digest();
+        digestAsHexString = Hex.encodeHexString(digest);
     }
 
     public boolean isLeaf() {
@@ -43,15 +58,12 @@ public class FolderReference implements Node{
         nodes.addAll(nodes);
         return nodes;
     }
-    
-    public FolderReference addChildNode(final Node node){
-        this.nodes.add(node);
-        return this;
+
+    public byte[] getDigest() {
+        return digest;
     }
 
-    public FolderReference removeChildNodes(){
-        this.nodes.clear();
-        return this;
+    public String getDigestAsHexString() {
+        return digestAsHexString;
     }
-
 }

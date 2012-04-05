@@ -41,7 +41,7 @@ public class FileSystemWatcher implements FileAlterationListener{
         this.folderToWatch = folderToWatch;
 
         // create dummy tree for starters
-        FolderReference rootNode = new FolderReference(folderToWatch, new ArrayList());
+        FolderReference rootNode = new FolderReference(folderToWatch.getName(), new ArrayList());
         this.currentTree = new TreeReference(rootNode);
     }
 
@@ -108,11 +108,10 @@ public class FileSystemWatcher implements FileAlterationListener{
             for(File childFile: file.listFiles()){
                 children.add(buildInMemorySubTree(childFile));
             }
-            retVal = new FolderReference(file, children);
+            retVal = new FolderReference(file.getName(), children);
         }else{
             try {
                 retVal = fileReader.readFile(file);
-                // now the (local) repository is up to date
             } catch (FileNotFoundException e) {
                 e.printStackTrace();  //todo handle error
             }

@@ -25,12 +25,24 @@
         <developer>
             <id>dSebastien</id>
             <name>Dubois Sebastien</name>
+			<url>http://www.dsebastien.net</url>
             <timezone>+1</timezone>
             <roles>
                 <role>developer</role>
             </roles>
         </developer>
     </developers>
+	
+	<issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/dsebastien/OpenCloudSync/issues</url>
+    </issueManagement>
+
+    <scm>
+        <url>git@github.com:dsebastien/jTicTac.git</url>
+        <connection>scm:git:git@github.com:dsebastien/OpenCloudSync.git</connection>
+        <developerConnection>scm:git:git@github.com:dsebastien/OpenCloudSync.git</developerConnection>
+    </scm>
 
     <build>
         <plugins>
@@ -39,8 +51,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${version.mavencompiler}</version>
                 <configuration>
-                    <target>1.6</target>
-                    <source>1.6</source>
+                    <target>${version.java}</target>
+                    <source>${version.java}</source>
                     <optimize>true</optimize>
                     <showWarnings>true</showWarnings>
                 </configuration>
@@ -81,7 +93,7 @@
                 <artifactId>maven-idea-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <jdkLevel>1.6</jdkLevel>
+                    <jdkLevel>${version.java}</jdkLevel>
                     <downloadSources>true</downloadSources>
                     <downloadJavadocs>true</downloadJavadocs>
                 </configuration>
@@ -347,7 +359,10 @@
     -->
 
     <properties>
-        <!-- Spring -->
+	    <!-- Java -->
+        <version.java>1.6</version.java>
+        
+		<!-- Spring -->
         <version.spring>3.1.1.RELEASE</version.spring>
         <version.spring-data-commons-core>1.1.0.RELEASE</version.spring-data-commons-core>
         <!--

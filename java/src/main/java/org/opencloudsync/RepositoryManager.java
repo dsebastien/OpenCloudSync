@@ -24,28 +24,42 @@ public class RepositoryManager {
         //todo check arg
 
 
-        // 0 check if enough space in the repo location to store the chunk
+        // todo check if enough space in the repo to store the chunk
 
         // 1 construct the path to where the chunk should be located
         // --> simple decomposition of the hash
         
         File fileChunkPath = getPathFor(fileChunk);
         
-        
         // 2 check if already exists
         //try to save
         //todo implement: store the chunk in the repo using the provided metadata.. / return status?
     }
-    
+
+    /**
+     * Determines where a given {@link FileChunk} should be stored in the repository.
+     * @param fileChunk
+     * @return the location where the {@link FileChunk} should be stored in the repository.
+     */
     public File getPathFor(final FileChunk fileChunk){
-        File retVal = null;
+        final String digestAsHexString = fileChunk.getDigestAsHexString();
         
-        StringBuilder path = new StringBuilder(repositoryFolder + File.separator);
-        path.append(fileChunk.getDigestAsHexString().substring(0,1));
-        System.out.println(path);
-        fileChunk.getDigestAsHexString();
-        System.out.println(fileChunk.getDigestAsHexString());
-        return null;
+        // todo review: okay like that or store it like git?
+        StringBuilder path = new StringBuilder(repositoryFolder + File.separator)
+            .append(digestAsHexString.substring(0,4))
+            .append(File.separator)
+            .append(digestAsHexString.substring(4, 8))
+            .append(File.separator)
+            .append(digestAsHexString.substring(8,12))
+            .append(File.separator)
+            .append(digestAsHexString.substring(12,16))
+            .append(File.separator)
+            .append(digestAsHexString.substring(16,20))
+            .append(File.separator)
+            .append(digestAsHexString.substring(20,24));
+        LOGGER.debug("Digest: "+digestAsHexString);
+        LOGGER.debug("Path: "+path);
+        return new File(path.toString());
     }
 
     //todo add method to get info about the repo (free space etc)?

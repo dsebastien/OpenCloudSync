@@ -78,7 +78,7 @@ public class FileSystemWatcher implements FileAlterationListener{
         }
     }
 
-    // check the index to verify if the folder was already watched
+    // todo check the index to verify if the folder was already watched
     // load root folder info (via File)
     // check index for that folder name in the known TreeReference list
     // need the latest version

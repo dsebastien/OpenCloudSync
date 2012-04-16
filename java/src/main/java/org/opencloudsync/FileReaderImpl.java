@@ -64,7 +64,7 @@ public class FileReaderImpl implements FileReader {
                     fileChunk = new FileChunk(fileChunkBytes);
 
                     //todo might not be the best way to do this
-                    // might be better to split this method in two to avoid mixing responsibilities
+                    // might be better to split this method/class in two to avoid mixing responsibilities
                     // might also be better to use an interface indead of an actual implementation
                     repositoryManager.saveChunk(fileChunk);
 

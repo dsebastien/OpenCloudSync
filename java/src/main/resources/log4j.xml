@@ -10,7 +10,7 @@
 	</appender>
 
     <logger name="org.opencloudsync">
-        <level value="trace" />
+        <level value="info" />
     </logger>
 
 	<logger name="org.springframework">

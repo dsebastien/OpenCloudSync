@@ -40,3 +40,5 @@ Icon?
 
 # Project specific
 *.h2.db
+sample-repository
+java/sample-data/

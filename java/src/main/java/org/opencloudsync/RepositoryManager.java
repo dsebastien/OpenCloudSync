@@ -1,9 +1,17 @@
 package org.opencloudsync;
 
+import com.google.common.base.Charsets;
+import org.apache.commons.io.FileSystemUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.management.FileSystem;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class RepositoryManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryManager.class);
@@ -20,20 +28,48 @@ public class RepositoryManager {
         //todo implement: check if the folder already exist or not, if not, try to create it, etc
     }
 
-    public void saveChunk(final FileChunk fileChunk){
-        //todo check arg
+    /**
+     * Writes the given {@link FileChunk} to the repository. Does nothing if the {@link FileChunk} already exists in the repository.
+     * The hex string version of the {@link FileChunk} digest is split in multiple parts and each part is used as folder name. The final part is used as file name.
+     * This ensures that not too many files are created in any repository folder.
+     * @param fileChunk the {@link FileChunk} to save in the repository
+     * @throws IOException if the free disk space is lower tha the data held in the {@link FileChunk} or if an error occurs while writing the {@link FileChunk} to disk
+     * @throws IllegalArgumentException if the argument is null
+     */
+    public void saveChunk(final FileChunk fileChunk) throws IOException{
+        Validate.notNull(fileChunk, "The file chunk cannot be null!");
 
+        /*
+            Seems broken on mac os x
+            //todo introduce jira in apache commons io
 
-        // todo check if enough space in the repo to store the chunk
-
-        // 1 construct the path to where the chunk should be located
-        // --> simple decomposition of the hash
+        //todo add timeout to the call?
+        final long freeSpaceKbInRepository = FileSystemUtils.freeSpaceKb(this.repositoryFolder.getAbsolutePath());
+        final long requiredFreeSpaceKb = fileChunk.getBytes().length / FileUtils.ONE_KB;
+        if(freeSpaceKbInRepository < requiredFreeSpaceKb){
+            throw new IOException("Not enough disk space to store the given file chunk! Required: "+requiredFreeSpaceKb+"KB. Available space: "+freeSpaceKbInRepository);
+        }
+        */
         
         File fileChunkPath = getPathFor(fileChunk);
         
-        // 2 check if already exists
-        //try to save
-        //todo implement: store the chunk in the repo using the provided metadata.. / return status?
+        if(!fileChunkPath.exists()){
+            LOGGER.trace("The '"+fileChunk.getDigestAsHexString()+"' file chunk does not exist yet in the repository; saving it.");
+            try {
+                //todo check if exists & can write to
+                FileOutputStream fileOutputStream = FileUtils.openOutputStream(fileChunkPath);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream); // todo specify the buffer size
+                bufferedOutputStream.write(fileChunk.getBytes());
+                bufferedOutputStream.flush();
+            } catch (IOException e) {
+                //todo handle
+                LOGGER.warn("Problem while trying to write the following file chunk to disk: "+fileChunk.getDigestAsHexString(),e);
+                throw e;
+            }
+        }else{
+            //todo slf4j arguments instead...
+            LOGGER.trace("The '"+fileChunk.getDigestAsHexString()+"' file chunk already exists in the repository, nothing to do.");
+        }
     }
 
     /**
@@ -43,24 +79,21 @@ public class RepositoryManager {
      */
     public File getPathFor(final FileChunk fileChunk){
         final String digestAsHexString = fileChunk.getDigestAsHexString();
-        
-        // todo review: okay like that or store it like git?
-        StringBuilder path = new StringBuilder(repositoryFolder + File.separator)
-            .append(digestAsHexString.substring(0,4))
+        final StringBuilder parentPath = new StringBuilder(repositoryFolder + File.separator)
+            .append(digestAsHexString.substring(0,8))
             .append(File.separator)
-            .append(digestAsHexString.substring(4, 8))
+            .append(digestAsHexString.substring(8, 16))
             .append(File.separator)
-            .append(digestAsHexString.substring(8,12))
+            .append(digestAsHexString.substring(16,24))
             .append(File.separator)
-            .append(digestAsHexString.substring(12,16))
-            .append(File.separator)
-            .append(digestAsHexString.substring(16,20))
-            .append(File.separator)
-            .append(digestAsHexString.substring(20,24));
-        LOGGER.debug("Digest: "+digestAsHexString);
-        LOGGER.debug("Path: "+path);
-        return new File(path.toString());
+            .append(digestAsHexString.substring(24,40));
+       
+        //todo parent path not seen as a folder???
+        //todo add extension to the files?
+        LOGGER.debug("Digest: " + digestAsHexString);
+        LOGGER.debug("Path: " + parentPath.toString());
+        return new File(parentPath.toString());
     }
 
-    //todo add method to get info about the repo (free space etc)?
+    //todo add method to get info about the repo (free space etc)
 }

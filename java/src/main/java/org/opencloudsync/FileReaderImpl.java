@@ -1,8 +1,11 @@
 package org.opencloudsync;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.opencloudsync.tree.FileChunkReference;
 import org.opencloudsync.tree.FileReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import java.io.*;
@@ -13,6 +16,8 @@ import java.util.List;
  * @see FileReader
  */
 public class FileReaderImpl implements FileReader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileReaderImpl.class);
+    
     private int maxFileChunkSize;
     private RepositoryManager repositoryManager;
 
@@ -44,13 +49,15 @@ public class FileReaderImpl implements FileReader {
 
         FileChunk fileChunk;
         byte[] fileChunkBytes;
-        
+
+        //todo evaluate chunk size based on file size
         byte[] buffer = new byte[maxFileChunkSize];
 
-        FileInputStream fileInputSteam = new FileInputStream(file);
-        BufferedInputStream bis = new BufferedInputStream(fileInputSteam, maxFileChunkSize);
-
+        FileInputStream fileInputStream = null;
         try {
+            fileInputStream = FileUtils.openInputStream(file);
+            BufferedInputStream bis = new BufferedInputStream(fileInputStream, maxFileChunkSize);
+
             while(bis.available() > 0){
                 int readBytes = bis.read(buffer);
 
@@ -60,7 +67,6 @@ public class FileReaderImpl implements FileReader {
                         fileChunkBytes[i] = buffer[i];
                     }
 
-                    //todo might be optimized by avoiding creating a filechunk object
                     fileChunk = new FileChunk(fileChunkBytes);
 
                     //todo might not be the best way to do this
@@ -75,10 +81,9 @@ public class FileReaderImpl implements FileReader {
                 }
             }
         } catch (IOException e) {
-            //todo handle
-            e.printStackTrace();
+            LOGGER.warn("Error while trying to read the file!",e);
         } finally{
-            IOUtils.closeQuietly(fileInputSteam);
+            IOUtils.closeQuietly(fileInputStream);
         }
         return new FileReference(file.getName(), fileChunkReferences);
     }

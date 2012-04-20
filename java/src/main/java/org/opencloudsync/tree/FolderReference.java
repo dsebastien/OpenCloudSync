@@ -34,6 +34,7 @@ public class FolderReference implements Node, DigestHolder{
         // it'll still be possible to recognize that it's actually the same content
         final MessageDigest messageDigest = DigestUtils.getShaDigest();
         for(Node node: nodes){
+            messageDigest.update(node.getDigest());
             DigestUtils.updateDigest(messageDigest, node.getDigest());
         }
         DigestUtils.updateDigest(messageDigest, name);

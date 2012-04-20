@@ -107,7 +107,7 @@ public class DigestUtils {
      * @return the updated digest
      */
     public static MessageDigest updateDigest(final MessageDigest messageDigest, String valueToDigest){
-        messageDigest.digest(getBytesUtf8(valueToDigest));
+        messageDigest.update(getBytesUtf8(valueToDigest));
         return messageDigest;
     }
 
@@ -118,7 +118,7 @@ public class DigestUtils {
      * @return the updated digest
      */
     public static MessageDigest updateDigest(final MessageDigest messageDigest, byte[] valueToDigest){
-        messageDigest.digest(valueToDigest);
+        messageDigest.update(valueToDigest);
         return messageDigest;
     }
 

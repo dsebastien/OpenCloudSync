@@ -30,7 +30,7 @@ public class FileSystemWatcher implements FileAlterationListener{
     private FileAlterationObserver fileAlterationObserver;
     private FileAlterationMonitor fileAlterationMonitor;
     
-    //todo add ignore list (text file in the root folder? e.g., .openCloudSyncIgnoreList
+    //todo add ignore list (text file in the root folder? e.g., .openCloudSyncIgnoreList)
 
     public FileSystemWatcher(){
     }
@@ -58,11 +58,13 @@ public class FileSystemWatcher implements FileAlterationListener{
     }
 
     public void start() throws Exception{
-        // TODO do a first pass on the file system then provide the info to the index manager
-
         //todo implement file filter (also for the file alteration observer)
         refresh();
 
+        // update the index with the current situation on disk
+        indexManager.save(currentTree);
+
+        // start observing the file system for changes
         // http://commons.apache.org/io/apidocs/org/apache/commons/io/monitor/FileAlterationObserver.html
         fileAlterationObserver = new FileAlterationObserver(folderToWatch);
 
@@ -78,27 +80,19 @@ public class FileSystemWatcher implements FileAlterationListener{
         }
     }
 
-    // todo check the index to verify if the folder was already watched
-    // load root folder info (via File)
-    // check index for that folder name in the known TreeReference list
-    // need the latest version
-
     /**
      * Refresh the in-memory tree
      */
     public void refresh(){
         // todo auto trigger through quartz job? or sleep x units of time
-
-        Node rootNode = buildInMemorySubTree(folderToWatch);
-        
-        TreeReference newTree = new TreeReference(rootNode);
-        
-        // todo implement
-        // todo compare newly created tree with existing one:
-        // merge both and create "changes" objects along the way
-        // once all changes are gathered: push to the index manager to be inserted in the db as an atomic operation (that will also trigger the repository update)
+        currentTree = new TreeReference(buildInMemorySubTree(folderToWatch));
     }
-    
+
+    /**
+     * Recreates the in-memory tree based on the actual situation on disk.
+     * @param file watched folder
+     * @return the root node of the tree
+     */
     private Node buildInMemorySubTree(final File file){
         Node retVal = null;
 
@@ -113,7 +107,7 @@ public class FileSystemWatcher implements FileAlterationListener{
             try {
                 retVal = fileReader.readFile(file);
             } catch (FileNotFoundException e) {
-                e.printStackTrace();  //todo handle error
+                LOGGER.error("Problem occurred while reading file: "+file.getAbsolutePath(), e);  //todo handle error
             }
         }
         

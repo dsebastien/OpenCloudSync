@@ -15,14 +15,29 @@ import java.util.List;
  * Time: 08:21
  */
 public class FolderReference implements Node, DigestHolder{
+    /**
+     * name of the folder.
+     */
     private String name;
+    /**
+     * digest of the folder. The digest is the combination of the digests of all files and folders in this folder.
+     */
     private byte[] digest;
+    /**
+     * string version of the digest.
+     */
     private String digestAsHexString;
 
-    //TODO !! concurrency/synchronization issues
-
+    /**
+     * all nodes present in this folder.
+     */
     private final List<Node> nodes = new ArrayList<Node>();
 
+    /**
+     * Default constructor.
+     * @param name name of the folder
+     * @param nodes list of nodes in the folder
+     */
     public FolderReference(final String name, final List<Node> nodes){
         // todo check arguments (not null, not empty name, etc)
         this.name = name;
@@ -37,7 +52,9 @@ public class FolderReference implements Node, DigestHolder{
             messageDigest.update(node.getDigest());
             DigestUtils.updateDigest(messageDigest, node.getDigest());
         }
-        DigestUtils.updateDigest(messageDigest, name);
+
+        // The folder name is not included in the digest in order to be able to recognize a folder based on its contents even if it was renamed
+        //DigestUtils.updateDigest(messageDigest, name);
         digest = messageDigest.digest();
         digestAsHexString = Hex.encodeHexString(digest);
     }
@@ -46,6 +63,10 @@ public class FolderReference implements Node, DigestHolder{
         return nodes.isEmpty();
     }
 
+    /**
+     * Get the name of the folder.
+     * @return the name of the folder.
+     */
     public String getName() {
         return name;
     }

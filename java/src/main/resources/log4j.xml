@@ -3,14 +3,24 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-	<appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss } %t %-5p %c : %m%n" />
-		</layout>
-	</appender>
+    <appender name="ConsoleAppender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss } %t %-5p %c : %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="FileAppender" class="org.apache.log4j.RollingFileAppender">
+        <param name="file" value="OpenCloudSync.log"/>
+        <param name="MaxFileSize" value="100MB"/>
+        <!-- how many backup files to keep -->
+        <param name="MaxBackupIndex" value="1"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss } %t %-5p %c : %m%n" />
+        </layout>
+    </appender>
 
     <logger name="org.opencloudsync">
-        <level value="info" />
+        <level value="trace" />
     </logger>
 
 	<logger name="org.springframework">
@@ -23,7 +33,10 @@
 
 	<root>
 		<priority value="trace" />
+        <!--
 		<appender-ref ref="ConsoleAppender" />
+		-->
+        <appender-ref ref="FileAppender" />
 	</root>
 
 </log4j:configuration>

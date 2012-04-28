@@ -3,18 +3,29 @@ package org.opencloudsync.tree;
 import org.apache.commons.codec.binary.Hex;
 import org.opencloudsync.DigestHolder;
 import org.opencloudsync.utils.DigestUtils;
+import org.springframework.ui.context.Theme;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Immutable reference to a file whose chunks are all available in the repository.
  * Date: 20/01/12
  * Time: 17:23
  */
 public class FileReference implements Node, DigestHolder {
+    /**
+     * The name of the file.
+     */
     private final String name;
+    /**
+     * The digest of the file (combination of the digests of all chunks of the file.
+     */
     private byte[] digest;
+    /**
+     * String version of the file digest.
+     */
     private String digestAsHexString;
 
     //todo add other metadata (?)
@@ -25,15 +36,13 @@ public class FileReference implements Node, DigestHolder {
         this.name = name;
         this.chunks.addAll(chunks); // we just add the given chunks
 
-        // The digest of a file is the combination of all file chunks hashes & the hash of the file name
-        // todo maybe better not to include the file name in the digest calculation?
-        // it'd mean that the hash of a file is only dependent on its contents thus even if the name of the file changes
-        // it'll still be possible to recognize that it's actually the same content
+        // The hash of a file is the combination of the digests of all chunks it is made of
         final MessageDigest messageDigest = DigestUtils.getShaDigest();
         for(Node node: chunks){
             DigestUtils.updateDigest(messageDigest, node.getDigest());
         }
-        DigestUtils.updateDigest(messageDigest, name);
+        //The file name is not part of the digest so that a file remains recognizable even if it was renamed
+        //DigestUtils.updateDigest(messageDigest, name);
         digest = messageDigest.digest();
         digestAsHexString = Hex.encodeHexString(digest);
     }
@@ -43,6 +52,7 @@ public class FileReference implements Node, DigestHolder {
     }
 
     public List<FileChunkReference> getChunks() {
+        //todo return a copy of the list instead? (avoid reference leak)
         return chunks;
     }
 

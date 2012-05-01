@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    OpenCloudSync: Open source cloud synchronization solution; an extensible software that allows you to synchronize your data with different storage systems.
+
+        Copyright (C) 2012 Sebastien Dubois <seb__at__dsebastien.net>
+
+        This program is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        any later version.
+
+        This program is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -24,6 +44,14 @@
     </jdbc:embedded-database>
     -->
 
+    <bean id = "org.h2.tools.Server"
+          class="org.h2.tools.Server"
+          factory-method="createTcpServer"
+          init-method="start"
+          destroy-method="stop">
+        <constructor-arg value="-tcp,-tcpAllowOthers,-tcpPort,8043" />
+    </bean>
+
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" 
           p:driverClassName="${jdbc.driverClassName}"
           p:url="${jdbc.url}"
@@ -33,16 +61,21 @@
 
     <jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
         <jdbc:script location="classpath:db-schema.sql" />
+        <!--
         <jdbc:script location="classpath:db-test-data.sql" />
+        -->
     </jdbc:initialize-database>
 
     <bean id="configuration" class="org.opencloudsync.Configuration"
           c:folderToWatch="${config.folderToWatch}"
           c:version="${config.version}"
+          c:dbSchemaName="${config.db.schemaName}"
+
     />
 
     <bean id="indexManager" class="org.opencloudsync.IndexManager"
           p:dataSource-ref="dataSource"
+          p:configuration-ref="configuration"
     />
     
     <bean id="repositoryManager" class="org.opencloudsync.RepositoryManager" c:repositoryFolder="${config.repositoryFolder}"

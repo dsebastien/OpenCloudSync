@@ -40,5 +40,7 @@ Icon?
 
 # Project specific
 *.h2.db
+*.trace.db
 sample-repository
 java/sample-data/
+java/OpenCloudSync.log

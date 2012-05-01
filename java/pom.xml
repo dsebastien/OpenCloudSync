@@ -10,6 +10,20 @@
 
     <name>OpenCloudSync</name>
     <description>Your data in the cloud, your way.</description>
+    <url>https://github.com/dsebastien/OpenCloudSync</url>
+    <inceptionYear>2012</inceptionYear>
+    <!--<logo></logo>-->
+    <mailingLists>
+        <mailingList>
+            <name>OpenCloudSync Developer List</name>
+            <post>opencloudsync@googlegroups.com</post>
+            <!--
+            <subscribe></subscribe>
+            <unsubscribe></unsubscribe>
+            <archive></archive>
+            -->
+        </mailingList>
+    </mailingLists>
 
     <!-- License to use (GPL, LGPL, Apache, ...) -->
     <licenses>
@@ -97,6 +111,39 @@
                     <downloadSources>true</downloadSources>
                     <downloadJavadocs>true</downloadJavadocs>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila.maven-license-plugin</groupId>
+                <artifactId>maven-license-plugin</artifactId>
+                <configuration>
+                    <header>src/etc/header.txt</header>
+                    <properties>
+                        <year>${project.inceptionYear}</year>
+                        <email>seb__at__dsebastien.net</email>
+                        <username>Sebastien Dubois</username>
+                    </properties>
+                    <strictCheck>true</strictCheck>
+                    <excludes>
+                        <exclude>.idea/**</exclude>
+                        <exclude>**/*.md</exclude>
+                        <exclude>**/*.log</exclude>
+                        <exclude>**/*.bak</exclude>
+                        <!-- project specific: -->
+                        <exclude>**/*.mwb</exclude>
+                        <exclude>**/*.db</exclude>
+                        <exclude>**/sample-repository/**</exclude>
+                        <exclude>**/sample-data/**</exclude>
+                    </excludes>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -318,7 +365,7 @@
                 <version>${version.pmd}</version>
                 <configuration>
                     <linkXref>true</linkXref>
-                    <targetJdk>1.6</targetJdk>
+                    <targetJdk>1.7</targetJdk>
                 </configuration>
             </plugin>
             <plugin>
@@ -360,7 +407,7 @@
 
     <properties>
 	    <!-- Java -->
-        <version.java>1.6</version.java>
+        <version.java>1.7</version.java>
         
 		<!-- Spring -->
         <version.spring>3.1.1.RELEASE</version.spring>

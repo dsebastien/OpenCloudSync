@@ -1,9 +1,29 @@
+/**
+ * OpenCloudSync: Open source cloud synchronization solution; an extensible software that allows you to synchronize your data with different storage systems.
+ *
+ *     Copyright (C) 2012 Sebastien Dubois <seb__at__dsebastien.net>
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.opencloudsync;
 
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
-import org.opencloudsync.tree.*;
+import org.opencloudsync.tree.FolderReference;
+import org.opencloudsync.tree.Node;
+import org.opencloudsync.tree.TreeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -36,7 +56,7 @@ public class FileSystemWatcher implements FileAlterationListener{
     }
 
     @Required
-    public void setFolderToWatch(final File folderToWatch){
+    public void setFolderToWatch(final File folderToWatch){ // todo handle multiple folders; the treereference & db are ready
         //todo check arg (folder and not file, exists, ...)
         this.folderToWatch = folderToWatch;
 
@@ -62,7 +82,9 @@ public class FileSystemWatcher implements FileAlterationListener{
         refresh();
 
         // update the index with the current situation on disk
-        indexManager.save(currentTree);
+        indexManager.update(currentTree);
+
+        //todo refresh a second time and invoke save again
 
         // start observing the file system for changes
         // http://commons.apache.org/io/apidocs/org/apache/commons/io/monitor/FileAlterationObserver.html
@@ -85,7 +107,7 @@ public class FileSystemWatcher implements FileAlterationListener{
      */
     public void refresh(){
         // todo auto trigger through quartz job? or sleep x units of time
-        currentTree = new TreeReference(buildInMemorySubTree(folderToWatch));
+        currentTree = new TreeReference((FolderReference)buildInMemorySubTree(folderToWatch));
     }
 
     /**

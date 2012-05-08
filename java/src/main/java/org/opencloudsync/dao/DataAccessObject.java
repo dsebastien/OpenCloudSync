@@ -16,37 +16,32 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opencloudsync;
+package org.opencloudsync.dao;
 
-import org.apache.commons.codec.binary.Hex;
-import org.opencloudsync.utils.DigestUtils;
+import org.opencloudsync.tree.Node;
 
-public class FileChunk implements DigestHolder {
-    private final byte[] bytes;
-    private final byte[] digest;
-    private final String digestAsHexString;
+/**
+ * Data Access Object generic interface.
+ */
+public interface DataAccessObject<T> {
+    /**
+     * Save or the given object in the db.
+     * @param reference the object to save
+     * @return the id of the row or -1 in all other cases.
+     */
+    int saveOrUpdate(final T reference);
 
-    public FileChunk(final byte[] bytes) {
-        this.bytes = bytes;
+    /**
+     * Find the id corresponding object in the db.
+     * @param reference the object to find
+     * @return the id of the found object or -1 if not found
+     */
+    int findIdByReference(final T reference);
 
-        digest = DigestUtils.sha(bytes);
-        digestAsHexString = Hex.encodeHexString(digest);
-    }
-
-    public byte[] getBytes() {
-        return bytes;
-    }
-
-    public byte[] getDigest(){
-        return digest;
-    }
-    
-    public String getDigestAsHexString(){
-        return digestAsHexString;
-    }
-
-    @Override
-    public String toString(){
-        return getDigestAsHexString();
-    }
+    /**
+     * Return the digest of the {@link Node} with the given id
+     * @param id the id of the {@link Node} to return the digest of
+     * @return the digest of the given {@link Node}
+     */
+    byte[] getDigest(int id);
 }

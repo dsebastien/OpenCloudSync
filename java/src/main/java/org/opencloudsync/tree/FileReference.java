@@ -25,14 +25,15 @@ import org.opencloudsync.utils.DigestUtils;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * Immutable reference to a file whose chunks are all available in the repository.
+ * Immutable reference to a file whose chunks are all available in the local repository.
  * Date: 20/01/12
  * Time: 17:23
  */
-public class FileReference implements Node, DigestHolder {
+public class FileReference implements FileNode<FileChunkReference> {
     /**
      * The name of the file.
      */
@@ -47,42 +48,55 @@ public class FileReference implements Node, DigestHolder {
     private String digestAsHexString;
 
     //todo add other metadata (?)
-    private final List<FileChunkReference> chunks = new ArrayList<FileChunkReference>();
+    private final List<FileChunkReference> chunks = new ArrayList<>();
     
     public FileReference(final String name, final List<FileChunkReference> chunks){
         Validate.notEmpty(name, "The name cannot be null or empty!");
         Validate.notNull(chunks, "The chunks cannot be null!");
-        this.name = name;
-        this.chunks.addAll(chunks); // we just add the given chunks
 
-        // The hash of a file is the combination of the digests of all chunks it is made of
+        this.name = name;
+        this.chunks.addAll(chunks);
+
+        // The digest of a file is the combination of the sha-1 digests of all chunks it is made of combined with the file name
         final MessageDigest messageDigest = DigestUtils.getShaDigest();
         for(Node node: chunks){
             DigestUtils.updateDigest(messageDigest, node.getDigest());
         }
-        //The file name is not part of the digest so that a file remains recognizable even if it was renamed
-        //DigestUtils.updateDigest(messageDigest, name);
+        //The file name is part of the digest so that a difference with the name of a file in a folder directly impacts the digest of the folder (and thus of the whole tree)
+        DigestUtils.updateDigest(messageDigest, name);
         digest = messageDigest.digest();
         digestAsHexString = Hex.encodeHexString(digest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getName() {
         return name;
     }
 
-    public List<FileChunkReference> getChunks() {
-        //todo return a copy of the list instead? (avoid reference leak)
-        return chunks;
+    /**
+     * Get the list of children; this method does not leak the list reference.
+     * @return a read-only copy of the children's list
+     */
+    @Override
+    public List<FileChunkReference> getChildren() {
+        return Collections.unmodifiableList(chunks);
     }
 
-    public boolean isLeaf() {
-        return true;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public byte[] getDigest() {
         return digest;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getDigestAsHexString() {
         return digestAsHexString;
     }

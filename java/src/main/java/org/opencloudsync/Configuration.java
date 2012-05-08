@@ -63,4 +63,21 @@ public class Configuration {
     public String getDbTableFile() {
         return dbSchemaName+".File";
     }
+
+    public String getDbTableFileChunk() {
+        return dbSchemaName+".FileChunk";
+    }
+    
+    public String getDbTableTreeHasFiles(){
+        return dbSchemaName+".Tree_has_Files";
+    }
+    
+    public String getDbTableFileHasFiles(){
+        return dbSchemaName+".File_has_Files";
+    }
+    
+    public String getDbTableFileHasFileChunks(){
+        return dbSchemaName+".File_has_FileChunks";
+    }
+
 }

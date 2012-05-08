@@ -1,3 +1,17 @@
+file
+    digest = sha1(chunks,name)
+
+    -> if name changes -> digest changes -> new file
+    -> if content changes -> digest changes -> new file
+
+
+folder
+    digest = sha1(nodes,name)
+
+    -> if name changes -> digest changes -> new folder
+    -> if content changes -> digest changes -> new folder
+
+
 Misc notes:
 -----------
 FileSystemWatcher:

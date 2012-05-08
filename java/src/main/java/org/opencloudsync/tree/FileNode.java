@@ -16,23 +16,26 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.opencloudsync;
+package org.opencloudsync.tree;
+
+import java.util.List;
 
 /**
- * Classes that implement this interface expose a digest that uniquely identifies them.
- * Date: 4/04/12
- * Time: 18:07
+ * File nodes can contain children (e.g., folder or file contents).
+ * T the type of the contained children.
+ * Date: 7/05/12
+ * Time: 18:13
  */
-public interface DigestHolder {
+public interface FileNode<T> extends Node {
     /**
-     * Get the digest bytes.
-     * @return the digest bytes.
+     * Get the name of the {@link FileNode}
+     * @return the name of the {@link FileNode}
      */
-    byte[] getDigest();
+    String getName();
 
     /**
-     * Get a {@link String} representation of the digest bytes.
-     * @return a {@link String} representation of the digest bytes.
+     * Get the children of this node.
+     * @return the children of this node.
      */
-    String getDigestAsHexString();
+    List<T> getChildren();
 }

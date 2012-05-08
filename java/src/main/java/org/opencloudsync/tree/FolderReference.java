@@ -18,19 +18,23 @@
  */
 package org.opencloudsync.tree;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.Validate;
 import org.opencloudsync.DigestHolder;
 import org.opencloudsync.utils.DigestUtils;
 
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
+ * Reference to a folder.
  * Date: 23/01/12
  * Time: 08:21
  */
-public class FolderReference implements Node, DigestHolder{
+public class FolderReference implements FileNode<FileNode>{
     /**
      * name of the folder.
      */
@@ -47,60 +51,63 @@ public class FolderReference implements Node, DigestHolder{
     /**
      * all nodes present in this folder.
      */
-    private final List<Node> nodes = new ArrayList<Node>();
+    private final List<FileNode> nodes = new ArrayList<>();
 
     /**
      * Default constructor.
      * @param name name of the folder
      * @param nodes list of nodes in the folder
      */
-    public FolderReference(final String name, final List<Node> nodes){
-        // todo check arguments (not null, not empty name, etc)
+    public FolderReference(final String name, final List<FileNode> nodes){
+        Validate.notEmpty(name, "The name cannot be null or empty!");
+        Validate.notNull(nodes, "The list of nodes cannot be null!");
+
         this.name = name;
         this.nodes.addAll(nodes);
 
-        // The digest of a folder is the combination of all the hashes of the nodes below it & the hash of the folder name
-        // todo maybe better not to include the folder name in the digest calculation?
-        // it'd mean that the hash of a folder is only dependent on its contents thus even if the name of the folder changes
-        // it'll still be possible to recognize that it's actually the same content
+        // The digest of a folder is the combination of all the digests of the nodes below it combined with the hash of its name
         final MessageDigest messageDigest = DigestUtils.getShaDigest();
         for(Node node: nodes){
             messageDigest.update(node.getDigest());
             DigestUtils.updateDigest(messageDigest, node.getDigest());
         }
-
-        // The folder name is not included in the digest in order to be able to recognize a folder based on its contents even if it was renamed
-        //DigestUtils.updateDigest(messageDigest, name);
+        //The folder name is part of the digest so that a difference with the name of a folder directly impacts the digest of its parent (if there is one) and of the whole tree
+        DigestUtils.updateDigest(messageDigest, name);
         digest = messageDigest.digest();
         digestAsHexString = Hex.encodeHexString(digest);
-    }
-
-    public boolean isLeaf() {
-        return nodes.isEmpty();
     }
 
     /**
      * Get the name of the folder.
      * @return the name of the folder.
      */
+    @Override
     public String getName() {
         return name;
     }
 
     /**
-     * Get the list of nodes; this method does not leak the list reference
-     * @return read-only copy of the list of nodes
+     * Get the list of children; this method does not leak the list reference.
+     * @return a read-only copy of the children's list
      */
-    public List<Node> getChildNodes() {
-        final List<Node> nodes = new ArrayList<Node>();
-        nodes.addAll(nodes);
-        return nodes;
+    @Override
+    public List<FileNode> getChildren() {
+        return Collections.unmodifiableList(nodes);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public byte[] getDigest() {
         return digest;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getDigestAsHexString() {
         return digestAsHexString;
     }

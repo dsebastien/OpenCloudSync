@@ -47,7 +47,7 @@ DROP TABLE IF EXISTS OpenCloudSync.File ;
 CREATE TABLE IF NOT EXISTS OpenCloudSync.File(
   id_file INT NOT NULL AUTO_INCREMENT,
   digest BINARY(20) NOT NULL,
-  name TEXT NOT NULL,
+  name VARCHAR(255) NOT NULL,
   PRIMARY KEY (id_file)
 );
 
@@ -109,9 +109,10 @@ CREATE  TABLE IF NOT EXISTS OpenCloudSync.File_has_Files(
 DROP TABLE IF EXISTS OpenCloudSync.File_has_FileChunks;
 
 CREATE TABLE IF NOT EXISTS OpenCloudSync.File_has_FileChunks(
+  id_filehasfilechunks INT NOT NULL AUTO_INCREMENT,
   id_file INT NOT NULL,
   id_filechunk INT NOT NULL,
-  PRIMARY KEY (id_file, id_filechunk),
+  PRIMARY KEY (id_filehasfilechunks),
   CONSTRAINT fk_Files_has_FileChunks_file
     FOREIGN KEY (id_file)
     REFERENCES OpenCloudSync.File (id_file),

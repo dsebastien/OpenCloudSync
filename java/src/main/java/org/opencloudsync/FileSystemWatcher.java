@@ -21,6 +21,7 @@ package org.opencloudsync;
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.opencloudsync.tree.FileNode;
 import org.opencloudsync.tree.FolderReference;
 import org.opencloudsync.tree.Node;
 import org.opencloudsync.tree.TreeReference;
@@ -62,7 +63,10 @@ public class FileSystemWatcher implements FileAlterationListener{
 
         // create dummy tree for starters
         FolderReference rootNode = new FolderReference(folderToWatch.getName(), new ArrayList());
-        this.currentTree = new TreeReference(rootNode);
+        List<FolderReference> rootNodes = new ArrayList<>();
+        rootNodes.add(rootNode);
+
+        this.currentTree = new TreeReference(rootNodes);
     }
 
     @Required
@@ -81,8 +85,8 @@ public class FileSystemWatcher implements FileAlterationListener{
         //todo implement file filter (also for the file alteration observer)
         refresh();
 
-        // update the index with the current situation on disk
-        indexManager.update(currentTree);
+        // saveOrUpdate the index with the current situation on disk
+        indexManager.saveOrUpdate(currentTree);
 
         //todo refresh a second time and invoke save again
 
@@ -107,7 +111,10 @@ public class FileSystemWatcher implements FileAlterationListener{
      */
     public void refresh(){
         // todo auto trigger through quartz job? or sleep x units of time
-        currentTree = new TreeReference((FolderReference)buildInMemorySubTree(folderToWatch));
+        final ArrayList<FolderReference> rootNodes = new ArrayList<>();
+        //todo handle multiple folders
+        rootNodes.add((FolderReference)buildInMemorySubTree(folderToWatch));
+        currentTree = new TreeReference(rootNodes);
     }
 
     /**
@@ -115,12 +122,12 @@ public class FileSystemWatcher implements FileAlterationListener{
      * @param file watched folder
      * @return the root node of the tree
      */
-    private Node buildInMemorySubTree(final File file){
-        Node retVal = null;
+    private FileNode buildInMemorySubTree(final File file){
+        FileNode retVal = null;
 
         if(file.isDirectory()){
             // todo check if it still exists
-            List<Node> children = new ArrayList<Node>();
+            List<FileNode> children = new ArrayList<>();
             for(File childFile: file.listFiles()){
                 children.add(buildInMemorySubTree(childFile));
             }

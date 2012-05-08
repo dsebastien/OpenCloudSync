@@ -1,6 +1,9 @@
-- configure and test maven-license plugin
-    http://code.google.com/p/maven-license-plugin/wiki/HowTo
-    http://code.google.com/p/maven-license-plugin/wiki/Configuration
+- method to reconstruct a local folder based on the index information to check if correct
+- problem if file contains the same file chunk twice or more?? unique constraint on file_has_filechunks table, how to avoid that?
+- + what about the order??? (retrieve file chunks in the correct order
+- add more logging output
+- replace xml with annotations..
+- dbschema, varchar(255) for file names? larger? impact on db size & performances...
 - implement hashCode / equals
 - write unit tests ;-)
 - pom.xml: configure maven license plugin

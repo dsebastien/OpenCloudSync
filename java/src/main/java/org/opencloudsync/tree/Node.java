@@ -25,6 +25,5 @@ import org.opencloudsync.DigestHolder;
  * Date: 23/01/12
  * Time: 08:21
  */
-public interface Node extends DigestHolder{ //todo feels like a little hack to extend DigestHolder
-    boolean isLeaf();
+public interface Node extends DigestHolder{ //todo feels like a hack to extend DigestHolder
 }

@@ -120,7 +120,7 @@ public class DigestUtils {
 
     /**
      * Updates a message digest.
-     * @param messageDigest the message digest to update
+     * @param messageDigest the message digest to saveOrUpdate
      * @param valueToDigest the value to 'add' to the digest
      * @return the updated digest
      */
@@ -131,7 +131,7 @@ public class DigestUtils {
 
     /**
      * Updates a message digest.
-     * @param messageDigest the message digest to update
+     * @param messageDigest the message digest to saveOrUpdate
      * @param valueToDigest the value to 'add' to the digest
      * @return the updated digest
      */

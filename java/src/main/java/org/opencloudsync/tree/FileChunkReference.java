@@ -26,7 +26,7 @@ import org.opencloudsync.DigestHolder;
  * Date: 20/01/12
  * Time: 17:24
  */
-public class FileChunkReference implements Node, DigestHolder {
+public class FileChunkReference implements Node {
     /**
      * Digest of the file chunk.
      */
@@ -37,7 +37,9 @@ public class FileChunkReference implements Node, DigestHolder {
     private final String digestAsHexString;
 
     /**
-     * Construct a {@link FileChunkReference}. Only accepts the raw data to avoid keeping references to the objects and thus preventing memory from being freed.
+     * Construct a {@link FileChunkReference}. Only accepts the raw data as input to avoid keeping
+     * references to the objects and thus preventing memory from being freed
+     * (very important since lots of those little beasts will be created).
      * @param digest the chunk's digest
      * @param digestAsHexString the chunk's digest as hex String
      */
@@ -48,15 +50,19 @@ public class FileChunkReference implements Node, DigestHolder {
         this.digestAsHexString = digestAsHexString;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public byte[] getDigest(){
         return digest;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getDigestAsHexString(){
         return digestAsHexString;
-    }
-
-    public boolean isLeaf() {
-        return true;
     }
 }

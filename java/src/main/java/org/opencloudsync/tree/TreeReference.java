@@ -18,15 +18,21 @@
  */
 package org.opencloudsync.tree;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.Validate;
 import org.opencloudsync.DigestHolder;
+import org.opencloudsync.utils.DigestUtils;
+
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Date: 20/01/12
  * Time: 17:22
  */
 public class TreeReference implements DigestHolder{
-    private final FolderReference rootNode;
+    private final List<FolderReference> rootNodes = new ArrayList<>();
     /**
      * The digest of the file (combination of the digests of all chunks of the file.
      */
@@ -36,23 +42,36 @@ public class TreeReference implements DigestHolder{
      */
     private String digestAsHexString;
 
-    public TreeReference(final FolderReference rootNode) { // todo accept a list of folderreferences: roots -> multiple folders
-        Validate.notNull(rootNode, "The root node cannot be null!");
-        this.rootNode = rootNode;
+    public TreeReference(final List<FolderReference> rootNodes) {
+        Validate.notEmpty(rootNodes, "The root nodes list cannot be null or empty!");
+        this.rootNodes.addAll(rootNodes);
 
-        //todo with multiple folders, calculate the hash of the tree as the combination of the hashes of all tree roots
-        digest = rootNode.getDigest();
-        digestAsHexString = rootNode.getDigestAsHexString();
+        // The digest of a tree is the combination of all the digests of the nodes below it
+        final MessageDigest messageDigest = DigestUtils.getShaDigest();
+        for(Node node: rootNodes){
+            messageDigest.update(node.getDigest());
+            DigestUtils.updateDigest(messageDigest, node.getDigest());
+        }
+        digest = messageDigest.digest();
+        digestAsHexString = Hex.encodeHexString(digest);
     }
 
-    public FolderReference getRootNode(){
-        return rootNode;
+    public List<FolderReference> getRootNodes(){
+        return rootNodes; // todo return a copy instead?
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public byte[] getDigest() {
         return digest;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getDigestAsHexString() {
         return digestAsHexString;
     }

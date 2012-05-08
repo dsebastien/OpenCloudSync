@@ -73,11 +73,6 @@
 
     />
 
-    <bean id="indexManager" class="org.opencloudsync.IndexManager"
-          p:dataSource-ref="dataSource"
-          p:configuration-ref="configuration"
-    />
-    
     <bean id="repositoryManager" class="org.opencloudsync.RepositoryManager" c:repositoryFolder="${config.repositoryFolder}"
 
     />
